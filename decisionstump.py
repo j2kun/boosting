@@ -1,3 +1,4 @@
+import sys
 
 class Stump:
    def __init__(self):
@@ -49,13 +50,13 @@ def defaultError(data, h):
    return minLabelErrorOfHypothesisAndNegation(data, h)
 
 
-def buildDecisionStump(drawExample, errorFunction=defaultError):
+def buildDecisionStump(drawExample, errorFunction=defaultError, debug=True):
    # find the index of the best feature to split on, and the best threshold for
    # that index
 
    data = [drawExample() for _ in range(500)]
 
-   bestThresholds = [(i,) + bestThreshold(data, i, errorFunction) for i in range(len(data[0][0])) if i not in forbiddenFeatures]
+   bestThresholds = [(i,) + bestThreshold(data, i, errorFunction) for i in range(len(data[0][0]))]
    feature, thresh, _ = min(bestThresholds, key = lambda p: p[2])
 
    stump = Stump()
@@ -65,9 +66,6 @@ def buildDecisionStump(drawExample, errorFunction=defaultError):
    stump.ltLabel = majorityVote([x for x in data if x[0][feature] < thresh])
 
    if debug:
-      if featureNames != None:
-         sys.stderr.write('Feature: %s, threshold: %d, %s\n' % (featureNames[feature], thresh, '+' if stump.gtLabel == 1 else '-'))
-      else:
-         sys.stderr.write('Feature: %d, threshold: %d, %s\n' % (feature, thresh, '+' if stump.gtLabel == 1 else '-'))
+      sys.stderr.write('Feature: %d, threshold: %d, %s\n' % (feature, thresh, '+' if stump.gtLabel == 1 else '-'))
 
    return stump

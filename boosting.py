@@ -3,7 +3,10 @@ from utils import draw, normalize, sign
 
 
 # compute the weighted error of a given hypothesis on a distribution
-def computeError(h, examples, weights):
+def computeError(h, examples, weights=None):
+   if weights is None:
+      weights = [1.] * len(examples)
+
    hypothesisResults = [h(x)*y for (x,y) in examples] # +1 if correct, else -1
    return hypothesisResults, sum(w for (z,w) in zip(hypothesisResults, weights) if z < 0)
 
@@ -12,7 +15,7 @@ def computeError(h, examples, weights):
 # where a learner is (() -> (list, label)) -> (list -> label)
 # boost the weak learner into a strong learner
 def boost(examples, weakLearner, rounds):
-   distr = normalize([1] * len(examples))
+   distr = normalize([1.] * len(examples))
    hypotheses = [None] * rounds
    alpha = [0] * rounds
 
@@ -31,4 +34,4 @@ def boost(examples, weakLearner, rounds):
    def finalHypothesis(x):
       return sign(sum(a * h(x) for (a, h) in zip(alpha, hypotheses)))
 
-   return finalHypothesis, distr
+   return finalHypothesis
